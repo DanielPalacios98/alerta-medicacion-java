@@ -1,13 +1,12 @@
 package espe.edu.ec.medicinealert.core;
 
-import espe.edu.ec.medicinealert.model.Medicine;
+import espe.edu.ec.medicinealert.model.Medicine;  // Import corregido
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class FileManager {
-    private static final String MEDICINE_FILE = "data/medicines.dat";
-
+    private static final String MEDICINE_FILE = System.getProperty("user.dir") + "/data/medicines.dat"; 
     public static List<Medicine> loadMedicines() {
         List<Medicine> medicines = new ArrayList<>();
         try (ObjectInputStream ois = new ObjectInputStream(

@@ -4,7 +4,7 @@ public class App {
     public static void main(String[] args) {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             AlertSystem.stop();
-            System.out.println("Application stopped successfully.");
+            System.out.println("App closed safely.");
         }));
         
         AlertSystem.start();
