@@ -4,45 +4,31 @@ import espe.edu.ec.medicinealert.model.Medicine;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class AlertSystem {
-    private static final ScheduledExecutorService scheduler = 
-        Executors.newScheduledThreadPool(1);
+    private static ScheduledExecutorService scheduler;
 
-    // Método para iniciar el sistema de alertas
-    public static void start() {
-        scheduler.scheduleAtFixedRate(() -> {
-            checkMedicationTime();
-        }, 0, 1, TimeUnit.MINUTES);  // Verifica cada minuto
+    public static void start(List<Medicine> medicines) {
+        scheduler = Executors.newScheduledThreadPool(1);
+        scheduler.scheduleAtFixedRate(() -> checkMedicationTime(medicines), 0, 1, TimeUnit.MINUTES);
     }
 
-    // Verifica si es hora de tomar medicación
-    private static void checkMedicationTime() {
-        List<Medicine> medicines = FileManager.loadMedicines();
+    private static void checkMedicationTime(List<Medicine> medicines) {
         LocalTime now = LocalTime.now().truncatedTo(ChronoUnit.MINUTES);
-        
-        for (Medicine medicine : medicines) {
-            if (medicine.shouldTakeNow(now)) {
-                showAlert(medicine);  // Llama al método corregido
+        for (Medicine med : medicines) {
+            if (now.equals(med.getTime())) {
+                showAlert(med);
             }
         }
     }
 
-private static void showAlert(Medicine medicine) {
-    String message = String.format(
-        "⚠️ ALERTA: Es hora de tomar %s (Dosis: %s) ⚠️",
-        medicine.getName(),  // Asegúrate de que coincida con el getter
-        medicine.getDose()   // en Medicine.java
-    );
-    System.out.println(message);
-}  // Notificación en consola
-        
-        // Opcional: Notificación visual (requiere javax.swing)
-        // javax.swing.JOptionPane.showMessageDialog(null, message);
+    private static void showAlert(Medicine medicine) {
+        System.out.println("¡Es hora de tomar el medicamento: " + medicine.getName() + "!");
     }
 
-    // Detiene el sistema de alertas
     public static void stop() {
         scheduler.shutdown();
     }
